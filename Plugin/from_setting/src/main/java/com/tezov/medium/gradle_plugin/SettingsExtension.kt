@@ -10,11 +10,11 @@ abstract class SettingsExtension constructor(
         settings.gradle.rootProject {
             buildscript.dependencies.add("classpath", classpath)
         }
-        settings.gradle.allprojects p@ {
+        settings.gradle.allprojects  {
             if(this != rootProject) {
                 plugins.whenPluginAdded {
-                    this@p.extensions.findByName("android")?.let {
-                        this@p.plugins.apply(id)
+                    extensions.findByName("android")?.let {
+                        plugins.apply(id)
                     }
                 }
             }
