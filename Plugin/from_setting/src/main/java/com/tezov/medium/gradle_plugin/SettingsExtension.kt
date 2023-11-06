@@ -6,23 +6,17 @@ abstract class SettingsExtension constructor(
     private val settings: Settings
 ) {
 
-    companion object {
-        internal const val KEY_PLUGINS = "libraries"
-    }
-
-    internal fun beforeProjects(alias: String, pluginCoordinates: String, pluginVersion:String) {
-        val domainPlugins = settings
-            .dependencyResolutionManagement
-            .versionCatalogs
-            .let {
-                it.findByName(KEY_PLUGINS) ?: it.create(KEY_PLUGINS)
-            }
-        with(domainPlugins) {
-            plugin(alias, pluginCoordinates).version(pluginVersion)
+    internal fun beforeProjects(classpath:String, id: String) {
+        settings.gradle.rootProject {
+            buildscript.dependencies.add("classpath", classpath)
         }
-        settings.gradle.allprojects {
+        settings.gradle.allprojects p@ {
             if(this != rootProject) {
-                project.plugins.apply(pluginCoordinates)
+                plugins.whenPluginAdded {
+                    this@p.extensions.findByName("android")?.let {
+                        this@p.plugins.apply(id)
+                    }
+                }
             }
         }
     }
