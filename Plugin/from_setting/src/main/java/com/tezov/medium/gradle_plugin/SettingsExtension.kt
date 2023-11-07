@@ -13,7 +13,7 @@ abstract class SettingsExtension constructor(
         settings.gradle.allprojects  {
             if(this != rootProject) {
                 plugins.whenPluginAdded {
-                    extensions.findByName("android")?.let {
+                    if(plugins.findPlugin(id) == null) {
                         plugins.apply(id)
                     }
                 }
